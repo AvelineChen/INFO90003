@@ -19,11 +19,13 @@ package com.ginkage.wearmouse.input;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.content.Context;
+import android.support.wearable.activity.WearableActivity;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 /** Detects key presses and swipes on 4-way or 8-way cursor Keypad. */
-public class KeypadGestureDetector {
+public class KeypadGestureDetector extends WearableActivity {
 
     /** Callback for the detected gestures. */
     public interface GestureListener {
@@ -57,6 +59,7 @@ public class KeypadGestureDetector {
 
         /** Called when the user is not pressing the Keypad anymore. */
         void onTouchUp();
+        void onWristGesture(int direction);
     }
 
     private final GestureDetector gestureDetector;
@@ -88,11 +91,12 @@ public class KeypadGestureDetector {
     }
 
     /** Should be called in the View's onTouchEvent() method. */
-    public void onTouchEvent(MotionEvent e) {
+    public boolean onTouchEvent(MotionEvent e) {
         switch (e.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 fromCenter = isInCenter(e);
                 if (!fromCenter) {
+                    System.out.println("onTouchEvent !fromCenter");
                     gestureListener.onAreaSwipe(-1);
                 }
                 // fall through
@@ -107,9 +111,12 @@ public class KeypadGestureDetector {
             default: // fall out
         }
         gestureDetector.onTouchEvent(e);
+        return true;
     }
 
+
     private void onTouchDown(float x, float y) {
+        System.out.println("onTouchDown");
         final float diffX = x - centerX;
         final float diffY = y - centerY;
         final float dist = calcDistFromCenter(x, y);

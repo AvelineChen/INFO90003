@@ -185,7 +185,7 @@ public class KeyboardHelper {
     private final KeyboardDataSender dataSender;
 
     /** @param dataSender Interface to send the Keyboard data with. */
-    KeyboardHelper(KeyboardDataSender dataSender) {
+    public KeyboardHelper(KeyboardDataSender dataSender) {
         this.dataSender = checkNotNull(dataSender);
     }
 
@@ -199,7 +199,7 @@ public class KeyboardHelper {
      * @param key4 Scan code of the 4th button that is currently pressed (or 0 if none).
      * @param key5 Scan code of the 5th button that is currently pressed (or 0 if none).
      */
-    void sendKeysDown(@Modifier int modifier, int key1, int key2, int key3, int key4, int key5) {
+    public void sendKeysDown(@Modifier int modifier, int key1, int key2, int key3, int key4, int key5) {
         sendKeysDown(modifier, key1, key2, key3, key4, key5, 0);
     }
 
@@ -212,7 +212,7 @@ public class KeyboardHelper {
      * @param key3 Scan code of the 3rd button that is currently pressed (or 0 if none).
      * @param key4 Scan code of the 4th button that is currently pressed (or 0 if none).
      */
-    void sendKeysDown(@Modifier int modifier, int key1, int key2, int key3, int key4) {
+    public void sendKeysDown(@Modifier int modifier, int key1, int key2, int key3, int key4) {
         sendKeysDown(modifier, key1, key2, key3, key4, 0, 0);
     }
 
@@ -235,7 +235,7 @@ public class KeyboardHelper {
      * @param key1 Scan code of the 1st button that is currently pressed (or 0 if none).
      * @param key2 Scan code of the 2nd button that is currently pressed (or 0 if none).
      */
-    void sendKeysDown(@Modifier int modifier, int key1, int key2) {
+    public void sendKeysDown(@Modifier int modifier, int key1, int key2) {
         sendKeysDown(modifier, key1, key2, 0, 0, 0, 0);
     }
 
@@ -245,7 +245,7 @@ public class KeyboardHelper {
      * @param modifier Modifier keys bit mask (Ctrl/Shift/Alt/GUI).
      * @param key Scan code of the button that is currently pressed (or 0 if none).
      */
-    void sendKeyDown(@Modifier int modifier, int key) {
+    public void sendKeyDown(@Modifier int modifier, int key) {
         sendKeysDown(modifier, key, 0, 0, 0, 0, 0);
     }
 
@@ -254,7 +254,7 @@ public class KeyboardHelper {
      *
      * @param modifier Modifier keys bit mask (Ctrl/Shift/Alt/GUI).
      */
-    void sendKeysUp(@Modifier int modifier) {
+    public void sendKeysUp(@Modifier int modifier) {
         sendKeysDown(modifier, 0, 0, 0, 0, 0, 0);
     }
 

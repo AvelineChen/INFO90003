@@ -21,10 +21,13 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import androidx.annotation.IntDef;
 import com.ginkage.wearmouse.R;
+import com.ginkage.wearmouse.bluetooth.HidDataSender;
+import com.ginkage.wearmouse.input.KeyboardHelper;
 import com.ginkage.wearmouse.input.KeyboardInputController;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,6 +35,8 @@ import java.lang.annotation.RetentionPolicy;
 /** Implements a "card-flip" animation using custom fragment transactions. */
 public class InputActivity extends WearableActivity {
     public static final String EXTRA_INPUT_MODE = "input_mode";
+    private HidDataSender hidDataSender;
+    private KeyboardHelper keyboardHelper;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({InputMode.MOUSE, InputMode.KEYPAD, InputMode.TOUCHPAD})
@@ -55,6 +60,9 @@ public class InputActivity extends WearableActivity {
         keyboardController = new KeyboardInputController(this::finish);
         keyboardController.onCreate(this);
 
+        this.hidDataSender = HidDataSender.getInstance();
+        this.keyboardHelper = new KeyboardHelper(hidDataSender);
+
         currentMode = InputMode.MOUSE;
         Intent intent = getIntent();
         if (intent != null) {
@@ -64,12 +72,14 @@ public class InputActivity extends WearableActivity {
             }
         }
 
+        Log.e("TEST", "RUNINING INPUT ACTIVITY");
+
         getFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_container, getFragment(currentMode))
                 .commit();
     }
-
+    //GABRIELE MARINI 969738
     @Override
     public void onEnterAmbient(Bundle ambientDetails) {
         super.onEnterAmbient(ambientDetails);
@@ -149,4 +159,29 @@ public class InputActivity extends WearableActivity {
                 ? new KeypadFragment()
                 : mode == InputMode.MOUSE ? new MouseFragment() : new TouchpadFragment();
     }
+
+    @Override /* KeyEvent.Callback */
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d("TEST", "GOT A KEY DOWN");
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_NAVIGATE_NEXT:
+                // Do something that advances a user View to the next item in an ordered list.
+                sendKeyPress(KeyboardHelper.Key.RIGHT);
+                System.out.println("NEXT GESTURE");
+                return true; //moveToNextItem();
+            case KeyEvent.KEYCODE_NAVIGATE_PREVIOUS:
+                // Do something that advances a user View to the previous item in an ordered list.
+                sendKeyPress(KeyboardHelper.Key.LEFT);
+                System.out.println("PREVIOUS GESTURE");
+                return true; //moveToPreviousItem();
+        }
+        // If you did not handle it, let it be handled by the next possible element as deemed by the Activity.
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void sendKeyPress(int key) {
+        keyboardHelper.sendKeyDown(0, key);
+        keyboardHelper.sendKeysUp(0);
+    }
+
 }

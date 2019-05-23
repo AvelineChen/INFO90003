@@ -21,6 +21,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.view.KeyEvent;
+
 import androidx.annotation.MainThread;
 import com.ginkage.wearmouse.bluetooth.HidDataSender;
 import com.ginkage.wearmouse.input.KeyboardHelper.Key;
@@ -217,11 +219,25 @@ public class KeypadController {
         }
 
         @Override
+        public void onWristGesture(int direction) {
+            if(direction==1) {
+                sendKeyPress(Key.RIGHT);
+                ui.setCenterText("next", false);
+                System.out.println("here is next");
+            }else {
+                // Do something that advances a user View to the previous item in an ordered list.
+                sendKeyPress(Key.LEFT);
+                ui.setCenterText("previous", false);
+                System.out.println("here is previous");
+            }
+        }
+        @Override
         public void onAreaSwipe(int area) {
             if (area != swipeArea) {
                 swipeArea = area;
                 // When a swipe in the center area is detected, keypad forcefully switches to the
                 // 4-way cursor.
+                System.out.println("onAreaSwipe  ui.setCenterText");
                 ui.setCenterText(
                         area == CENTER_AREA ? "" : keyNameProvider.getKeyName(getSwipeKey()),
                         m8Way && area == CENTER_AREA);
